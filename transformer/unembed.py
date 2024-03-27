@@ -6,7 +6,7 @@ from jaxtyping import Float, Int
 import einops
 
 class Unembed(nn.Module):
-    def __init__(self, cfg):
+    def __init__(self, cfg: Config):
         super().__init__()
         self.cfg = cfg
         self.W_U = nn.Parameter(t.empty((cfg.d_model, cfg.d_vocab)))
