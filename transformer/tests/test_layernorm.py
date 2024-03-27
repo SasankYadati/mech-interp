@@ -1,5 +1,5 @@
-from transformer.LayerNorm import LayerNorm
-from transformer.Config import Config
+from transformer.layer_norm import LayerNorm
+from transformer.config import Config
 import torch as t
 from transformer_lens import HookedTransformer
 

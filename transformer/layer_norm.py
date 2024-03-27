@@ -1,7 +1,7 @@
 import torch as t
 from torch import nn
 from torch import Tensor
-from transformer.Config import Config
+from transformer.config import Config
 from jaxtyping import Float, Int
 
 class LayerNorm(nn.Module):

@@ -1,9 +1,8 @@
 import torch as t
 from torch import nn
 from torch import Tensor
-from transformer.Config import Config
+from transformer.config import Config
 from jaxtyping import Float, Int
-import einops
 
 class Embed(nn.Module):
     def __init__(self, cfg: Config):
@@ -15,4 +14,3 @@ class Embed(nn.Module):
     def forward(self, tokens: Int[Tensor, "batch pos"]) -> Float[Tensor, "batch pos d_model"]:
         return self.W_E[tokens]
 
-    
