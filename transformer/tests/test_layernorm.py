@@ -1,14 +1,7 @@
 from transformer.layer_norm import LayerNorm
 from transformer.config import Config
 import torch as t
-from transformer_lens import HookedTransformer
-
-reference_gpt2 = HookedTransformer.from_pretrained(
-    "gpt2-small",
-    fold_ln=False,
-    center_unembed=False,
-    center_writing_weights=False,
-)
+from transformer.tests import reference_gpt2
 
 class TestLayerNorm():
     def test_shape(self):
