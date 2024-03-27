@@ -1,4 +1,4 @@
-from transformer.LayerNorm import LayerNorm
+from transformer.Embed import Embed
 from transformer.Config import Config
 import torch as t
 from transformer_lens import HookedTransformer
@@ -10,22 +10,20 @@ reference_gpt2 = HookedTransformer.from_pretrained(
     center_writing_weights=False,
 )
 
-class TestLayerNorm():
+class TestEmbed():
     def test_shape(self):
-        d_model = 4
-        cfg = Config(layer_norm_eps=1e-5, d_model=d_model)
-        l = LayerNorm(cfg)
-        x = t.randn((32, 3, d_model))
+        cfg = Config()
+        l = Embed(cfg)
+        x = t.randint(0, cfg.d_vocab, size=(32, 8))
         y = l(x)
-
-        assert x.shape == y.shape
+        assert y.shape == (32, 8, cfg.d_model)
 
     def test_with_reference_gpt2(self):
         cfg = Config(debug=True)
-        l = LayerNorm(cfg)
-        l.load_state_dict(reference_gpt2.ln_final.state_dict())
-        x = t.randn((32, 8, cfg.d_model))
+        l = Embed(cfg)
+        l.load_state_dict(reference_gpt2.embed.state_dict())
+        x = t.randint(0, cfg.d_vocab, size=(32, 8))
         y_out = l(x)
-        y_expected = reference_gpt2.ln_final(x)
+        y_expected = reference_gpt2.embed(x)
         comparison = t.isclose(y_out, y_expected, atol=1e-4, rtol=1e-3)
         assert comparison.sum()/comparison.numel() >= 0.99999
