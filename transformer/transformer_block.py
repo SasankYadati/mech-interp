@@ -18,5 +18,4 @@ class TransformerBlock(nn.Module):
 
     def forward(self, resid_pre: Float[Tensor, "batch pos d_model"]) -> Float[Tensor, "batch pos d_model"]:
         x = self.attn(self.ln1(resid_pre)) + resid_pre
-        x += self.mlp(self.ln2(x))
-        return x
+        return x + self.mlp(self.ln2(x))

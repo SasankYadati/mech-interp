@@ -19,7 +19,6 @@ class LayerNorm(nn.Module):
 
     def forward(self, residual: Float[Tensor, "batch pos d_model"]) -> Float[Tensor, "batch pos d_model"]:
         mean = t.mean(residual, dim=-1, keepdim=True)
-        var = t.var(residual, dim=-1, keepdim=True, unbiased=False)
-        out = (residual - mean) / ((var + self.eps) ** (0.5))
-        out = out * self.w + self.b
-        return out
+        variance = t.var(residual, dim=-1, keepdim=True, unbiased=False)
+        out = (residual - mean) / ((variance + self.eps) ** (0.5))
+        return out * self.w + self.b
