@@ -8,7 +8,7 @@ import einops
 device = t.device("cuda" if t.cuda.is_available() else "cpu")
 
 class Attention(nn.Module):
-    IGNORE: Float[Tensor, ""]
+    EPSILON: Float[Tensor, ""]
     def __init__(self, cfg: Config):
         super().__init__()
         self.cfg = cfg
@@ -31,15 +31,11 @@ class Attention(nn.Module):
         nn.init.normal_(self.W_V, std=self.cfg.init_range)
         nn.init.normal_(self.W_O, std=self.cfg.init_range)
 
-        self.register_buffer("IGNORE", t.tensor(-1e5, dtype=t.float32, device=device))
+        self.register_buffer("EPSILON", t.tensor(-1e5, dtype=t.float32, device=device))
 
 
     def forward(self, normalized_resid_pre: Float[Tensor, "batch pos d_model"]) -> Float[Tensor, "batch pos d_model"]:
-        # b - num batches
-        # s - seq len
-        # e - d_model
-        # n - n_heads
-        # h - d_heads
+        # b - num batches, s - seq len, e - d_model, n - n_heads, h - d_heads
 
         keys = einops.einsum(normalized_resid_pre, self.W_K, "b s e, n e h -> b s n h") + self.b_K
         queries = einops.einsum(normalized_resid_pre, self.W_Q, "b s e, n e h -> b s n h") + self.b_Q
@@ -65,5 +61,5 @@ class Attention(nn.Module):
         sq, sk = attn_scores.shape[-2], attn_scores.shape[-1]
         ones = t.ones(sq, sk, device=attn_scores.device)
         mask = t.triu(ones, diagonal=1).bool() 
-        attn_scores.masked_fill_(mask, self.IGNORE)
+        attn_scores.masked_fill_(mask, self.EPSILON)
         return attn_scores
