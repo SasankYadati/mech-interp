@@ -11,3 +11,4 @@ Train the sample transformer using ```1-train_sample_transformer.ipynb```.
 - visualize attention patterns
 - write basic detectors
 - understand induction heads
+- direct logit attribution
