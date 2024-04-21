@@ -103,3 +103,23 @@ def plot_loss_difference(log_probs, rep_str, seq_len):
     fig.add_vrect(x0=0, x1=seq_len-.5, fillcolor="red", opacity=0.2, line_width=0)
     fig.add_vrect(x0=seq_len-.5, x1=2*seq_len-1, fillcolor="green", opacity=0.2, line_width=0)
     fig.show()
+
+def convert_tokens_to_string(model, tokens, batch_index=0):
+    '''
+    Helper function to convert tokens into a list of strings, for printing.
+    '''
+    if len(tokens.shape) == 2:
+        tokens = tokens[batch_index]
+    return [f"|{model.tokenizer.decode(tok)}|_{c}" for (c, tok) in enumerate(tokens)]
+
+
+def plot_logit_attribution(model, logit_attr: t.Tensor, tokens: t.Tensor, title: str = ""):
+    tokens = tokens.squeeze()
+    y_labels = convert_tokens_to_string(model, tokens[:-1])
+    x_labels = ["Direct"] + [f"L{l}H{h}" for l in range(model.cfg.n_layers) for h in range(model.cfg.n_heads)]
+    imshow(
+        to_numpy(logit_attr), 
+        x=x_labels, y=y_labels, 
+        labels={"x": "Term", "y": "Position", "color": "logit"}, title=title if title else None, 
+        height=18*len(y_labels), width=24*len(x_labels)
+    )
