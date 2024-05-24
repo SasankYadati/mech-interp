@@ -12,3 +12,4 @@ Train the sample transformer using ```1-train_sample_transformer.ipynb```.
 - write basic detectors
 - understand induction heads
 - direct logit attribution
+- induction head ablation
